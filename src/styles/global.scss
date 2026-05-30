@@ -1,0 +1,113 @@
+:root {
+  color-scheme: dark;
+
+  --color-bg: #13142a;
+  --color-surface: #1d1f3d;
+  --color-surface-border: #34376a;
+  --color-board: #191b36;
+  --color-board-border: #2e3160;
+  --color-text: #f2f3fb;
+  --color-text-muted: #9aa0cf;
+  --color-accent: #7c6cf0;
+  --color-accent-soft: #00c2b2;
+  --color-focus: #8b9cff;
+
+  // semantic puzzle states
+  --color-locked: #6c5ce7; // exact match (violet fill)
+  --color-misplaced: #e5484d; // in the word, wrong place (red outline)
+  --color-unused: #3a3f5c; // absent (muted slate)
+
+  --color-tile-text: #f2f3fb;
+  --color-tile-bg: #191b36;
+  --color-tile-border: #34376a;
+  --color-tile-border-filled: #6b73c8;
+  --color-tile-unused-text: #c3c8e8;
+
+  --color-key-text: #f2f3fb;
+  --color-key-bg: #2a2d57;
+  --color-key-bg-hover: #353a6a;
+  --color-key-border: #3a3f72;
+  --color-key-action: #4b4f86;
+  --color-key-action-hover: #5a5f9c;
+  --color-key-unused-text: #aeb4dc;
+
+  --color-bar: #3a3f6a;
+}
+
+// colorblind-friendly palette: push the locked fill to orange (misplaced keeps
+// its red outline, which already reads as a distinct treatment)
+body.theme-high-contrast {
+  --color-locked: #e8590c;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: "Space Grotesk", system-ui, -apple-system, sans-serif;
+  font-size: 100%;
+  line-height: 1.3;
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  &.scroll-locked {
+    overflow: hidden;
+  }
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+button {
+  font-family: inherit;
+}
+
+a {
+  color: var(--color-accent);
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: var(--color-accent-soft);
+  }
+}
+
+:focus-visible {
+  @include focus-ring;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  border: 0;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

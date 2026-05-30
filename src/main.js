@@ -1,9 +1,5 @@
 import { createApp } from "vue";
 import App from "./App.vue";
-import { Keyboard, Modal, Results } from "@/components";
+import "@/styles/global.scss";
 
-createApp(App)
-  .component("Keyboard", Keyboard)
-  .component("Modal", Modal)
-  .component("Results", Results)
-  .mount("#app");
+createApp(App).mount("#app");

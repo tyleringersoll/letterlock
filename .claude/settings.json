@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e \"const m=require\\('./src/data/library.js'\\); \")",
+      "Bash(npm --version)",
+      "Bash(node --input-type=module -e ' *)",
+      "Bash(npx vite *)",
+      "Bash(npx eslint *)",
+      "Bash(echo \"=== exit: $? ===\")",
+      "Bash(echo \"lint exit: $?\")",
+      "Bash(echo \"lint: clean \\(exit $?\\)\")",
+      "Bash(echo \"lint clean \\(exit $?\\)\")",
+      "Bash(node /tmp/gen-words.mjs)",
+      "Bash(echo \"exit $?\")"
+    ]
+  }
+}

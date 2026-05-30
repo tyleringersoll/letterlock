@@ -1,0 +1,29 @@
+<template>
+  <svg
+    viewBox="0 0 24 24"
+    aria-hidden="true"
+    focusable="false"
+  >
+    <rect
+      x="3"
+      y="12"
+      width="4"
+      height="8"
+      rx="1"
+    />
+    <rect
+      x="10"
+      y="7"
+      width="4"
+      height="13"
+      rx="1"
+    />
+    <rect
+      x="17"
+      y="3"
+      width="4"
+      height="17"
+      rx="1"
+    />
+  </svg>
+</template>
