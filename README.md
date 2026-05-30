@@ -1,35 +1,54 @@
-# vue-wordle
+# Vue Wordle
 
-After playing the real Wordle for a few days I thought it would be a fun challenge to create my own version using Vue.js 3 and then play as many times as I want.
+An accessible, infinitely-replayable [Wordle](https://www.nytimes.com/games/wordle/) clone built with **Vue 3** and **Vite**. Every play deals a brand-new word, so you can play as many times as you like.
 
-See it live here: [https://vue-wordle-tyleringersoll.netlify.app/](https://vue-wordle-tyleringersoll.netlify.app/)
+**Live:** [vue-wordle-tyleringersoll.netlify.app](https://vue-wordle-tyleringersoll.netlify.app/)
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/90900e60-a588-4166-b07a-0a3362199b5e/deploy-status)](https://app.netlify.com/sites/wordle-tyleringersoll/deploys)
 
+## Highlights
+
+- **Pure, fully-tested game core.** The Wordle rules, statistics, sharing, and storage live in dependency-free modules under [`src/game`](src/game) and [`src/services`](src/services), each covered by unit tests.
+- **State-driven UI, zero DOM hacking.** A [`useGame`](src/composables/useGame.js) state machine exposes the board and keyboard as computed values; components are a pure function of state.
+- **Accessibility first.** ARIA grid semantics, polite/assertive live-region announcements, a focus-trapped modal that restores focus, full keyboard play, a colour-blind (high-contrast) theme, and `prefers-reduced-motion` support.
+- **Resilient.** In-progress games and statistics persist through a defensive storage wrapper (graceful fallback when `localStorage` is unavailable), with a migration from the original stats schema.
+
+## Architecture
+
+```
+src/
+├── game/          Pure rules: constants, engine (evaluateGuess), dictionary
+├── services/      storage · statistics · share  (pure, framework-free)
+├── composables/   useGame · useKeyboard · useFocusTrap · useAnnouncer · useTheme
+├── components/    game/ keyboard/ stats/ ui/ icons/ layout/ a11y/
+├── views/         GameView (orchestrator)
+└── styles/        design tokens + global theme (CSS custom properties)
+```
+
+The dependency arrow points one way: components depend on composables, composables depend on services and the game core, and the game core depends on nothing. That is what keeps the rules testable in isolation.
+
 ## Prerequisites
 
-You need the following prerequisites to run this project locally:
+- Node.js 18+ (20+ recommended)
 
-- Node ^12.0.0 || >= 14.0.0 ([https://nodejs.dev/download/](https://nodejs.dev/download/))
+## Getting started
 
-- The latest Vue CLI on your computer:
+```bash
+npm install      # install dependencies
+npm run dev      # start the Vite dev server
+npm test         # run the unit tests once (Vitest)
+npm run test:watch
+npm run build    # production build to dist/
+npm run preview  # preview the production build
+npm run lint     # lint and auto-fix
+```
 
-  ```bash
-  npm install -g @vue/cli
-  ```
+## How to play
 
-## Project Setup
+Guess the five-letter word in six tries. After each guess the tiles reveal how close you were:
 
-To set up your project, do the following:
+- 🟩 **Correct** — right letter, right spot.
+- 🟨 **Present** — right letter, wrong spot.
+- ⬛ **Absent** — not in the word.
 
-- Clone this repo:
-
-  ```bash
-  git clone https://github.com/tyleringersoll/vue-wordle.git VueWordle.game/
-  ```
-
-- Navigate to `WordleClone.game/` and run `npm install`
-
-## Running Dev Environment
-
-To start up the Vue dev server, run `npm run serve` from project root.
+Open the **ℹ︎** menu to toggle high-contrast mode.

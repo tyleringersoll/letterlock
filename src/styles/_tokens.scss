@@ -1,0 +1,10 @@
+$sm: 376px;
+$md: 768px;
+$lg: 1024px;
+$xl: 1280px;
+
+@mixin focus-ring {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
