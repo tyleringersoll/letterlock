@@ -50,6 +50,7 @@
         var forceConsentBanner = window.VISITOR_FORCE_CONSENT_BANNER === true;
         var saved = getCookie(COOKIE);
         var hasAnalyticsConsent = !needsConsent || (!forceConsentBanner && saved === 'granted');
+        var bannerWillShow = needsConsent && (!saved || forceConsentBanner);
 
         var grantedConsent = {
           analytics_storage: 'granted',
@@ -64,9 +65,9 @@
           ad_personalization: 'denied'
         };
 
-        gtag('consent', 'default', hasAnalyticsConsent ? grantedConsent : Object.assign({}, deniedConsent, {
-          wait_for_update: 500
-        }));
+        gtag('consent', 'default', hasAnalyticsConsent
+          ? grantedConsent
+          : (bannerWillShow ? Object.assign({}, deniedConsent, { wait_for_update: 500 }) : deniedConsent));
 
         function startAnalytics() {
           if (window.__analyticsStarted) return;
@@ -84,9 +85,8 @@
           });
         }
 
-        if (hasAnalyticsConsent) {
-          startAnalytics();
-        }
+        // Always start — consent state controls what GA sends (G111 vs G100), not whether it runs
+        startAnalytics();
 
         if (needsConsent && (!saved || forceConsentBanner)) {
           document.addEventListener('DOMContentLoaded', function () {
@@ -120,7 +120,6 @@
             document.getElementById('ga-accept').onclick = function () {
               setCookie(COOKIE, 'granted', 365);
               gtag('consent', 'update', grantedConsent);
-              startAnalytics();
               el.remove();
             };
             document.getElementById('ga-decline').onclick = function () {
