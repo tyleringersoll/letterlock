@@ -1,6 +1,6 @@
 // Word data for the six-letter puzzle.
 //
-// These lists are independently sourced: the answer list is a small curated set
+// These lists are independently sourced: the answer list is a curated set
 // of common words, and the accepted-guess list is derived from the public system
 // word list (/usr/share/dict/words).
 
