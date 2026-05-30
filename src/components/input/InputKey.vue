@@ -36,7 +36,8 @@ const computedAriaLabel = computed(() => {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  flex: 1;
+  flex: 0 0 var(--key-width, 2.75rem);
+  width: var(--key-width, 2.75rem);
   min-width: 0;
   height: 3.25rem;
   padding: 0;
@@ -63,11 +64,12 @@ const computedAriaLabel = computed(() => {
   }
 
   &--action {
-    flex: 1.6;
+    --key-width: var(--action-key-width, 8rem);
+
     border-radius: 0.9rem;
     background-color: var(--color-key-action);
     border-color: var(--color-key-action);
-    color: #fff;
+    color: var(--color-key-action-text);
 
     &:hover {
       background-color: var(--color-key-action-hover);
@@ -75,7 +77,7 @@ const computedAriaLabel = computed(() => {
   }
 
   &--locked {
-    color: #fff;
+    color: var(--color-locked-text);
     background-color: var(--color-locked);
     border-color: var(--color-locked);
   }

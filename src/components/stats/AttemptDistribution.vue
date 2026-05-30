@@ -71,12 +71,13 @@ function widthFor(count) {
     padding: 0.2rem 0.5rem;
     font-size: 0.85rem;
     font-weight: 700;
-    color: #fff;
+    color: var(--color-bar-text);
     background-color: var(--color-bar);
     border-radius: 999px;
   }
 
   &__row--current &__bar {
+    color: var(--color-locked-text);
     background-color: var(--color-locked);
   }
 }

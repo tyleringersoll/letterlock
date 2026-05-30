@@ -67,6 +67,10 @@ function onPress(value) {
 
 <style lang="scss" scoped>
 .input-panel {
+  --key-gap: 0.35rem;
+  --key-width: calc((100% - 3.15rem) / 10);
+  --action-key-width: calc(40% - 0.21rem);
+
   width: 100%;
   max-width: 32rem;
   margin: 0 auto;
@@ -74,11 +78,12 @@ function onPress(value) {
 
   &__row {
     display: flex;
-    gap: 0.35rem;
+    justify-content: center;
+    gap: var(--key-gap);
     margin-bottom: 0.4rem;
 
     &:nth-child(2) {
-      padding: 0 5%;
+      padding: 0;
     }
 
     &--actions {

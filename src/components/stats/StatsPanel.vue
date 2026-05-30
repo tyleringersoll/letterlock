@@ -138,7 +138,7 @@ async function onShare() {
   font-family: inherit;
   font-size: 1rem;
   font-weight: 700;
-  color: #fff;
+  color: var(--color-on-accent);
   background-color: var(--color-accent);
   border: 0;
   border-radius: 0.9rem;

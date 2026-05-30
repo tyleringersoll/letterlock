@@ -63,7 +63,7 @@ const isEvaluated = computed(() =>
   }
 
   &--locked {
-    color: #fff;
+    color: var(--color-locked-text);
     background-color: var(--color-locked);
     border-color: var(--color-locked);
   }

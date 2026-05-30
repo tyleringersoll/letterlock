@@ -131,7 +131,7 @@ const examples = [
   border-radius: 28%;
 
   &--locked {
-    color: #fff;
+    color: var(--color-locked-text);
     background-color: var(--color-locked);
     border-color: var(--color-locked);
   }

@@ -64,7 +64,7 @@ defineProps({
 @keyframes tile-glow {
   0%,
   100% {
-    box-shadow: 0 0 0 rgba(124, 108, 240, 0);
+    box-shadow: 0 0 0 rgba(0, 183, 255, 0);
     transform: translateY(0);
   }
   50% {

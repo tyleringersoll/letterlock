@@ -55,7 +55,7 @@ const options = [
     transition: color 0.15s ease, background-color 0.15s ease;
 
     &--active {
-      color: #fff;
+      color: var(--color-on-accent);
       background-color: var(--color-accent);
     }
   }
