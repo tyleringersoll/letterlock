@@ -24,13 +24,113 @@
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap"
     />
-    <!-- Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZF0CB6HTNK"></script>
+    <!-- GA4 + Consent Mode v2 -->
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-ZF0CB6HTNK');
+      (function () {
+        var GA_ID = 'G-ZF0CB6HTNK';
+        var COOKIE = 'ga_consent';
+        var DOMAIN = '.ingersoll.dev';
+
+        function getCookie(n) {
+          var m = document.cookie.match('(?:^|;)\\s*' + n + '=([^;]*)');
+          return m ? decodeURIComponent(m[1]) : null;
+        }
+
+        function setCookie(n, v, days) {
+          var exp = new Date(Date.now() + days * 864e5).toUTCString();
+          document.cookie = n + '=' + encodeURIComponent(v) +
+            '; expires=' + exp + '; path=/; domain=' + DOMAIN + '; SameSite=Lax; Secure';
+        }
+
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        window.gtag = gtag;
+
+        var needsConsent = window.VISITOR_REQUIRES_CONSENT === true;
+        var forceConsentBanner = window.VISITOR_FORCE_CONSENT_BANNER === true;
+        var saved = getCookie(COOKIE);
+        var hasAnalyticsConsent = !needsConsent || (!forceConsentBanner && saved === 'granted');
+
+        var grantedConsent = {
+          analytics_storage: 'granted',
+          ad_storage: 'granted',
+          ad_user_data: 'granted',
+          ad_personalization: 'granted'
+        };
+        var deniedConsent = {
+          analytics_storage: 'denied',
+          ad_storage: 'denied',
+          ad_user_data: 'denied',
+          ad_personalization: 'denied'
+        };
+
+        gtag('consent', 'default', hasAnalyticsConsent ? grantedConsent : Object.assign({}, deniedConsent, {
+          wait_for_update: 500
+        }));
+
+        function startAnalytics() {
+          if (window.__analyticsStarted) return;
+          window.__analyticsStarted = true;
+          gtag('js', new Date());
+          gtag('config', GA_ID);
+
+          (window.requestIdleCallback || function (cb) { setTimeout(cb, 1); })(function () {
+            if (window.__gtagLoaded) return;
+            window.__gtagLoaded = true;
+            var s = document.createElement('script');
+            s.async = true;
+            s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
+            document.head.appendChild(s);
+          });
+        }
+
+        if (hasAnalyticsConsent) {
+          startAnalytics();
+        }
+
+        if (needsConsent && (!saved || forceConsentBanner)) {
+          document.addEventListener('DOMContentLoaded', function () {
+            var el = document.createElement('div');
+            el.setAttribute('role', 'dialog');
+            el.setAttribute('aria-label', 'Cookie consent');
+            el.innerHTML =
+              '<div style="max-width:760px;display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px">' +
+                '<p style="margin:0;flex:1 1 220px;font-size:14px;line-height:1.5">' +
+                  'We use cookies to understand how visitors use this site.' +
+                '</p>' +
+                '<div style="display:flex;gap:10px;flex-shrink:0">' +
+                  '<button id="ga-decline" type="button"' +
+                  ' style="padding:8px 18px;border:1px solid rgba(255,255,255,0.3);background:transparent;' +
+                  'color:#fff;border-radius:6px;font-size:14px;cursor:pointer">Decline</button>' +
+                  '<button id="ga-accept" type="button"' +
+                  ' style="padding:8px 20px;border:none;background:#fff;color:#111;' +
+                  'border-radius:6px;font-size:14px;font-weight:600;cursor:pointer">Accept</button>' +
+                '</div>' +
+              '</div>';
+            Object.assign(el.style, {
+              position: 'fixed', bottom: '0', left: '0', right: '0', zIndex: '9999',
+              background: 'rgba(15,15,15,0.95)', backdropFilter: 'blur(8px)',
+              color: '#fff', padding: '16px 24px', boxSizing: 'border-box',
+              display: 'flex', justifyContent: 'center',
+              fontFamily: 'system-ui,-apple-system,BlinkMacSystemFont,sans-serif',
+              boxShadow: '0 -2px 20px rgba(0,0,0,0.4)'
+            });
+            document.body.appendChild(el);
+
+            document.getElementById('ga-accept').onclick = function () {
+              setCookie(COOKIE, 'granted', 365);
+              gtag('consent', 'update', grantedConsent);
+              startAnalytics();
+              el.remove();
+            };
+            document.getElementById('ga-decline').onclick = function () {
+              setCookie(COOKIE, 'denied', 365);
+              gtag('consent', 'update', deniedConsent);
+              el.remove();
+            };
+          });
+        }
+      })();
     </script>
     <title>Letterlock — six-letter word puzzle</title>
   </head>
