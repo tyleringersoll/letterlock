@@ -1,6 +1,6 @@
 {
-  "name": "Tyler's Vue.js Wordle Project",
-  "short_name": "Vue.js Wordle",
+  "name": "Letterlock",
+  "short_name": "Letterlock",
   "icons": [
     {
       "src": "/android-chrome-192x192.png",
@@ -13,7 +13,7 @@
       "type": "image/png"
     }
   ],
-  "theme_color": "#ffffff",
-  "background_color": "#ffffff",
+  "theme_color": "#13142a",
+  "background_color": "#13142a",
   "display": "standalone"
 }

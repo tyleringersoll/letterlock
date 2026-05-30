@@ -1,19 +1,21 @@
-import { library, words } from "@/data/library";
-import { WORD_LENGTH } from "./constants";
+import { answers, acceptedWords } from "@/data/words";
+import { DEFAULT_ANSWER_LENGTH } from "./config";
 
-export const answers = library;
-
-const validGuesses = new Set(
-  [...library, ...words].map((word) => word.toLowerCase())
-);
+const accepted = new Set(acceptedWords.map((word) => word.toLowerCase()));
 
 export function isValidWord(word) {
-  return typeof word === "string" && validGuesses.has(word.toLowerCase());
+  return typeof word === "string" && accepted.has(word.toLowerCase());
 }
 
-// random's injectable so tests can force a specific word
-export function randomAnswer(random = Math.random) {
-  return answers[Math.floor(random() * answers.length)];
+export function answersOfLength(length) {
+  return answers.filter((word) => word.length === length);
 }
 
-export { WORD_LENGTH };
+// random's injectable so tests (and Daily Lock's seeded RNG) can force a word
+export function randomAnswer(length = DEFAULT_ANSWER_LENGTH, random = Math.random) {
+  const pool = answersOfLength(length);
+  if (pool.length === 0) {
+    throw new Error(`No answers available for length ${length}.`);
+  }
+  return pool[Math.floor(random() * pool.length)];
+}

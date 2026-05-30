@@ -1,14 +1,15 @@
 <script setup>
-import KeyboardKey from "./KeyboardKey.vue";
+import InputKey from "./InputKey.vue";
 import IconBackspace from "@/components/icons/IconBackspace.vue";
 
 defineProps({
+  // letter -> best TileState, from useGame().letterStates
   letterStates: { type: Object, default: () => ({}) },
 });
 
 const emit = defineEmits(["letter", "enter", "backspace"]);
 
-const ROWS = [
+const LETTER_ROWS = [
   ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],
   ["a", "s", "d", "f", "g", "h", "j", "k", "l"],
   ["z", "x", "c", "v", "b", "n", "m"],
@@ -23,24 +24,16 @@ function onPress(value) {
 
 <template>
   <div
-    class="keyboard"
+    class="input-panel"
     role="group"
-    aria-label="Keyboard"
+    aria-label="On-screen input"
   >
     <div
-      v-for="(row, index) in ROWS"
+      v-for="(row, index) in LETTER_ROWS"
       :key="index"
-      class="keyboard__row"
+      class="input-panel__row"
     >
-      <KeyboardKey
-        v-if="index === 2"
-        key-value="enter"
-        label="Enter"
-        :wide="true"
-        aria-label="Submit guess"
-        @press="onPress"
-      />
-      <KeyboardKey
+      <InputKey
         v-for="letter in row"
         :key="letter"
         :key-value="letter"
@@ -48,23 +41,34 @@ function onPress(value) {
         :state="letterStates[letter] || ''"
         @press="onPress"
       />
-      <KeyboardKey
-        v-if="index === 2"
+    </div>
+
+    <!-- action keys on their own row, not flanking the letters -->
+    <div class="input-panel__row input-panel__row--actions">
+      <InputKey
         key-value="backspace"
-        :wide="true"
+        variant="action"
         aria-label="Delete letter"
         @press="onPress"
       >
         <IconBackspace />
-      </KeyboardKey>
+        <span class="input-panel__action-label">Delete</span>
+      </InputKey>
+      <InputKey
+        key-value="enter"
+        variant="action"
+        label="Enter"
+        aria-label="Submit attempt"
+        @press="onPress"
+      />
     </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
-.keyboard {
+.input-panel {
   width: 100%;
-  max-width: 30rem;
+  max-width: 32rem;
   margin: 0 auto;
   padding: 0 0.25rem;
 
@@ -73,10 +77,18 @@ function onPress(value) {
     gap: 0.35rem;
     margin-bottom: 0.4rem;
 
-    // nudge the middle row in so it looks like a real keyboard
     &:nth-child(2) {
       padding: 0 5%;
     }
+
+    &--actions {
+      margin-top: 0.6rem;
+      gap: 0.6rem;
+    }
+  }
+
+  &__action-label {
+    margin-left: 0.5rem;
   }
 }
 </style>

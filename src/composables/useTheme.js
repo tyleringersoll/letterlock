@@ -1,7 +1,7 @@
 import { ref, watch } from "vue";
 import { storage as defaultStorage } from "@/services/storage";
 
-export const HIGH_CONTRAST_KEY = "wordleHighContrast";
+export const HIGH_CONTRAST_KEY = "letterlock-high-contrast";
 export const HIGH_CONTRAST_CLASS = "theme-high-contrast";
 
 export function useTheme({ storage = defaultStorage } = {}) {

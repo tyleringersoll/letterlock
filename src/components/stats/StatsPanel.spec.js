@@ -8,7 +8,12 @@ const setNav = (key, value) =>
 
 function mountPanel() {
   return mount(StatsPanel, {
-    props: { stats: createEmptyStats(), justFinished: true, shareText: "grid" },
+    props: {
+      stats: createEmptyStats(7),
+      maxGuesses: 7,
+      justFinished: true,
+      shareText: "grid",
+    },
   });
 }
 

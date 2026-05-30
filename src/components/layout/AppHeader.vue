@@ -18,7 +18,7 @@ defineEmits(["open-info", "open-stats"]);
     </button>
 
     <h1 class="app-header__title">
-      Tyler's Wordle
+      Letterlock
     </h1>
 
     <button
@@ -47,8 +47,9 @@ defineEmits(["open-info", "open-stats"]);
   &__title {
     margin: 0;
     font-size: clamp(1.2rem, 5vw, 1.7rem);
-    font-weight: 700;
-    letter-spacing: 0.02em;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: lowercase;
   }
 
   &__button {

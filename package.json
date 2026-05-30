@@ -1,9 +1,9 @@
 {
-  "name": "vue-wordle",
+  "name": "letterlock",
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "An accessible, infinitely-replayable Wordle clone built with Vue 3.",
+  "description": "Letterlock — a browser-based six-letter word puzzle built with Vue 3.",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

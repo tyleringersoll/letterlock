@@ -1,54 +1,51 @@
-# Vue Wordle
+# Letterlock
 
-An accessible, infinitely-replayable [Wordle](https://www.nytimes.com/games/wordle/) clone built with **Vue 3** and **Vite**. Every play deals a brand-new word, so you can play as many times as you like.
+A browser-based six-letter word puzzle built as a front-end state-management and interaction exercise.
 
-**Live:** [vue-wordle-tyleringersoll.netlify.app](https://vue-wordle-tyleringersoll.netlify.app/)
+You have seven attempts to find the hidden word. After each attempt, every letter is marked as **locked** (right letter, right place), **misplaced** (in the word, wrong place), or **unused** (not in the word).
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/90900e60-a588-4166-b07a-0a3362199b5e/deploy-status)](https://app.netlify.com/sites/wordle-tyleringersoll/deploys)
+## What it is
 
-## Highlights
+Letterlock is a small, self-contained word puzzle written in Vue 3. It was built to practice front-end state management, input handling, and responsive layout — keeping the game rules in pure, testable modules and the UI as a thin, reactive layer on top.
 
-- **Pure, fully-tested game core.** The Wordle rules, statistics, sharing, and storage live in dependency-free modules under [`src/game`](src/game) and [`src/services`](src/services), each covered by unit tests.
-- **State-driven UI, zero DOM hacking.** A [`useGame`](src/composables/useGame.js) state machine exposes the board and keyboard as computed values; components are a pure function of state.
-- **Accessibility first.** ARIA grid semantics, polite/assertive live-region announcements, a focus-trapped modal that restores focus, full keyboard play, a colour-blind (high-contrast) theme, and `prefers-reduced-motion` support.
-- **Resilient.** In-progress games and statistics persist through a defensive storage wrapper (graceful fallback when `localStorage` is unavailable), with a migration from the original stats schema.
+## Technical highlights
+
+- **Configurable puzzle size.** Board dimensions are derived from `answerLength` and `maxGuesses` (default 6 letters × 7 attempts) rather than a fixed grid, so the same code renders any size.
+- **On-screen and physical keyboard input**, sharing one set of actions.
+- **Attempt validation** against an accepted-word list, with clear feedback for short or unrecognized words.
+- **Pure game core.** Scoring, statistics, and sharing live in dependency-free modules ([`src/game`](src/game), [`src/services`](src/services)) covered by unit tests.
+- **Reactive state machine** ([`useGame`](src/composables/useGame.js)) that exposes the board and keyboard as computed values — no direct DOM manipulation.
+- **Two modes.** Free Play (a fresh random word each round, the default) and Daily Lock (one date-seeded word per day).
+- **Accessibility.** ARIA grid semantics, live-region announcements, a focus-trapped result panel, full keyboard play, a high-contrast color option, and reduced-motion support.
+- **Responsive layout** that scales the board to fit short viewports.
+- **Local stats and resume.** Records and in-progress games persist in `localStorage` behind a defensive wrapper.
+
+## Word lists
+
+The word and answer lists are a small curated set of common six-letter words; the accepted-guess list is derived from the public system word list (`/usr/share/dict/words`).
 
 ## Architecture
 
 ```
 src/
-├── game/          Pure rules: constants, engine (evaluateGuess), dictionary
+├── game/          Pure rules: config, constants, engine (evaluateAttempt), dictionary, random
 ├── services/      storage · statistics · share  (pure, framework-free)
-├── composables/   useGame · useKeyboard · useFocusTrap · useAnnouncer · useTheme
-├── components/    game/ keyboard/ stats/ ui/ icons/ layout/ a11y/
+├── composables/   useGame · useKeyboard · useFocusTrap · useAnnouncer · useTheme · useScrollLock
+├── components/    game/ input/ stats/ ui/ icons/ layout/ a11y/
 ├── views/         GameView (orchestrator)
 └── styles/        design tokens + global theme (CSS custom properties)
 ```
-
-The dependency arrow points one way: components depend on composables, composables depend on services and the game core, and the game core depends on nothing. That is what keeps the rules testable in isolation.
-
-## Prerequisites
-
-- Node.js 18+ (20+ recommended)
 
 ## Getting started
 
 ```bash
 npm install      # install dependencies
-npm run dev      # start the Vite dev server
-npm test         # run the unit tests once (Vitest)
-npm run test:watch
+npm run dev      # start the dev server
+npm test         # run the unit tests (Vitest)
 npm run build    # production build to dist/
-npm run preview  # preview the production build
 npm run lint     # lint and auto-fix
 ```
 
-## How to play
+## Portfolio description
 
-Guess the five-letter word in six tries. After each guess the tiles reveal how close you were:
-
-- 🟩 **Correct** — right letter, right spot.
-- 🟨 **Present** — right letter, wrong spot.
-- ⬛ **Absent** — not in the word.
-
-Open the **ℹ︎** menu to toggle high-contrast mode.
+> Built a browser-based word puzzle as a front-end exercise, including keyboard input, validation logic, local game state, responsive layout, and animated feedback.

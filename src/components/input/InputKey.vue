@@ -6,7 +6,7 @@ const props = defineProps({
   keyValue: { type: String, required: true },
   label: { type: String, default: "" },
   state: { type: String, default: "" },
-  wide: { type: Boolean, default: false },
+  variant: { type: String, default: "letter" }, // letter | action
   ariaLabel: { type: String, default: "" },
 });
 
@@ -23,7 +23,7 @@ const computedAriaLabel = computed(() => {
   <button
     type="button"
     class="key"
-    :class="[state && `key--${state}`, { 'key--wide': wide }]"
+    :class="[state && `key--${state}`, `key--${variant}`]"
     :aria-label="computedAriaLabel"
     @click="emit('press', keyValue)"
   >
@@ -38,20 +38,21 @@ const computedAriaLabel = computed(() => {
   justify-content: center;
   flex: 1;
   min-width: 0;
-  height: 3.5rem;
+  height: 3.25rem;
   padding: 0;
   font-family: inherit;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   font-weight: 700;
   text-transform: uppercase;
+  letter-spacing: 0.02em;
   color: var(--color-key-text);
   background-color: var(--color-key-bg);
-  border: 0;
-  border-radius: 4px;
+  border: 1px solid var(--color-key-border);
+  border-radius: 999px; // pill keys
   cursor: pointer;
   user-select: none;
   touch-action: manipulation;
-  transition: background-color 0.15s ease, transform 0.05s ease;
+  transition: background-color 0.15s ease, transform 0.05s ease, border-color 0.15s ease;
 
   &:hover {
     background-color: var(--color-key-bg-hover);
@@ -61,29 +62,40 @@ const computedAriaLabel = computed(() => {
     transform: translateY(1px);
   }
 
-  &--wide {
-    flex: 1.5;
-    font-size: 0.75rem;
-  }
-
-  &--correct {
+  &--action {
+    flex: 1.6;
+    border-radius: 0.9rem;
+    background-color: var(--color-key-action);
+    border-color: var(--color-key-action);
     color: #fff;
-    background-color: var(--color-correct);
+
+    &:hover {
+      background-color: var(--color-key-action-hover);
+    }
   }
 
-  &--present {
+  &--locked {
     color: #fff;
-    background-color: var(--color-present);
+    background-color: var(--color-locked);
+    border-color: var(--color-locked);
   }
 
-  &--absent {
-    color: var(--color-key-absent-text);
-    background-color: var(--color-absent);
+  // red outline, keeps the key surface
+  &--misplaced {
+    color: var(--color-key-text);
+    border-color: var(--color-misplaced);
+    box-shadow: inset 0 0 0 2px var(--color-misplaced);
+  }
+
+  &--unused {
+    color: var(--color-key-unused-text);
+    background-color: var(--color-unused);
+    border-color: var(--color-unused);
   }
 
   :deep(svg) {
-    width: 1.5rem;
-    height: 1.5rem;
+    width: 1.4rem;
+    height: 1.4rem;
   }
 }
 

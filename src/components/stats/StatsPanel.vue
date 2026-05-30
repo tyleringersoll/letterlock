@@ -1,11 +1,12 @@
 <script setup>
 import { computed, ref } from "vue";
-import { winPercentage } from "@/services/statistics";
+import { solveRate } from "@/services/statistics";
 import { shareOrCopy } from "@/services/share";
-import GuessDistribution from "./GuessDistribution.vue";
+import AttemptDistribution from "./AttemptDistribution.vue";
 
 const props = defineProps({
   stats: { type: Object, required: true },
+  maxGuesses: { type: Number, required: true },
   justFinished: { type: Boolean, default: false },
   highlight: { type: Number, default: 0 },
   shareText: { type: String, default: "" },
@@ -13,9 +14,9 @@ const props = defineProps({
 
 const summary = computed(() => [
   { label: "Played", value: props.stats.gamesPlayed },
-  { label: "Win %", value: winPercentage(props.stats) },
-  { label: "Current streak", value: props.stats.currentStreak },
-  { label: "Max streak", value: props.stats.maxStreak },
+  { label: "Solve %", value: solveRate(props.stats) },
+  { label: "Streak", value: props.stats.currentStreak },
+  { label: "Best streak", value: props.stats.maxStreak },
 ]);
 
 const shareStatus = ref("idle"); // idle | copied | failed
@@ -28,7 +29,6 @@ const shareLabel = computed(() => {
 
 async function onShare() {
   const result = await shareOrCopy(props.shareText);
-  // the native sheet has its own ui; only flash for the clipboard fallback
   if (result === "copied" || result === "failed") {
     shareStatus.value = result;
     setTimeout(() => {
@@ -41,7 +41,7 @@ async function onShare() {
 <template>
   <div class="stats-panel">
     <h3 class="stats-panel__heading">
-      Statistics
+      Your record
     </h3>
     <dl class="summary">
       <div
@@ -59,17 +59,18 @@ async function onShare() {
     </dl>
 
     <h3 class="stats-panel__heading">
-      Guess distribution
+      Attempts to solve
     </h3>
     <p
       v-if="!stats.gamesPlayed"
       class="stats-panel__empty"
     >
-      Play a game to start building your distribution.
+      Finish a puzzle to start your record.
     </p>
-    <GuessDistribution
+    <AttemptDistribution
       v-else
-      :distribution="stats.guessDistribution"
+      :distribution="stats.attemptDistribution"
+      :max-guesses="maxGuesses"
       :highlight="highlight"
     />
 
@@ -88,10 +89,10 @@ async function onShare() {
 .stats-panel {
   &__heading {
     margin: 0 0 0.75rem;
-    font-size: 1.1rem;
+    font-size: 1rem;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--color-text);
+    letter-spacing: 0.06em;
+    color: var(--color-text-muted);
   }
 
   &__empty {
@@ -116,12 +117,15 @@ async function onShare() {
   &__value {
     margin: 0;
     font-size: 1.9rem;
-    font-weight: 700;
+    font-weight: 800;
     line-height: 1.1;
+    color: var(--color-accent);
   }
 
   &__label {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
     color: var(--color-text-muted);
   }
 }
@@ -135,14 +139,14 @@ async function onShare() {
   font-size: 1rem;
   font-weight: 700;
   color: #fff;
-  background-color: var(--color-correct);
+  background-color: var(--color-accent);
   border: 0;
-  border-radius: 0.5rem;
+  border-radius: 0.9rem;
   cursor: pointer;
   transition: filter 0.2s ease;
 
   &:hover {
-    filter: brightness(1.08);
+    filter: brightness(1.1);
   }
 }
 </style>

@@ -9,39 +9,33 @@ const emit = defineEmits(["toggleContrast"]);
 
 const examples = [
   {
-    word: "weary",
+    word: "planet",
     highlight: 0,
-    state: TileState.CORRECT,
-    text: "W is in the word and in the correct spot.",
+    state: TileState.LOCKED,
+    text: "P is locked — right letter, right place.",
   },
   {
-    word: "pilot",
+    word: "rocket",
     highlight: 1,
-    state: TileState.PRESENT,
-    text: "I is in the word but in the wrong spot.",
+    state: TileState.MISPLACED,
+    text: "O is misplaced — in the word, but somewhere else.",
   },
   {
-    word: "vague",
-    highlight: 2,
-    state: TileState.ABSENT,
-    text: "G is not in the word in any spot.",
+    word: "silver",
+    highlight: 3,
+    state: TileState.UNUSED,
+    text: "V is unused — not in the word at all.",
   },
 ];
-
-const labels = {
-  [TileState.CORRECT]: "correct",
-  [TileState.PRESENT]: "present, wrong spot",
-  [TileState.ABSENT]: "absent",
-};
 </script>
 
 <template>
   <div class="how-to-play">
     <p>
-      Guess the five-letter word in six tries. Every play deals a brand-new word,
-      so you can play as many times as you like.
+      Solve the hidden six-letter word. Each attempt reveals which letters are
+      locked in place, which belong somewhere else, and which are not used.
     </p>
-    <p>After each guess, the tiles show how close you were:</p>
+    <p>You have seven attempts. After each one the tiles update:</p>
 
     <ul class="examples">
       <li
@@ -58,14 +52,9 @@ const labels = {
             :key="index"
             class="mini-tile"
             :class="index === example.highlight ? `mini-tile--${example.state}` : ''"
-          >
-            {{ letter }}
-          </span>
+          >{{ letter }}</span>
         </span>
-        <span class="examples__text">
-          <strong>{{ example.word[example.highlight].toUpperCase() }}</strong>
-          ({{ labels[example.state] }}) — {{ example.text }}
-        </span>
+        <span class="examples__text">{{ example.text }}</span>
       </li>
     </ul>
 
@@ -76,19 +65,17 @@ const labels = {
           :checked="highContrast"
           @change="emit('toggleContrast', $event.target.checked)"
         >
-        High-contrast (colour-blind) mode
+        High-contrast colors
       </label>
     </div>
 
     <p class="how-to-play__credit">
-      Built with Vue 3 by Tyler Ingersoll —
+      Letterlock is a small front-end word puzzle.
       <a
-        href="https://github.com/tyleringersoll/vue-wordle"
+        href="https://github.com/tyleringersoll/letterlock"
         target="_blank"
         rel="noopener"
-      >
-        source on GitHub
-      </a>
+      >Source on GitHub</a>
     </p>
   </div>
 </template>
@@ -121,7 +108,7 @@ const labels = {
 
   &__tiles {
     display: flex;
-    gap: 0.25rem;
+    gap: 0.3rem;
   }
 
   &__text {
@@ -136,28 +123,30 @@ const labels = {
   justify-content: center;
   width: 1.9rem;
   height: 1.9rem;
-  font-weight: 700;
+  font-weight: 800;
   text-transform: uppercase;
   color: var(--color-tile-text);
+  background-color: var(--color-tile-bg);
   border: 2px solid var(--color-tile-border-filled);
-  border-radius: 3px;
+  border-radius: 28%;
 
-  &--correct {
+  &--locked {
     color: #fff;
-    background-color: var(--color-correct);
-    border-color: var(--color-correct);
+    background-color: var(--color-locked);
+    border-color: var(--color-locked);
   }
 
-  &--present {
-    color: #fff;
-    background-color: var(--color-present);
-    border-color: var(--color-present);
+  &--misplaced {
+    color: var(--color-tile-text);
+    background-color: transparent;
+    border-color: var(--color-misplaced);
+    box-shadow: inset 0 0 0 1.5px var(--color-misplaced);
   }
 
-  &--absent {
-    color: #fff;
-    background-color: var(--color-absent);
-    border-color: var(--color-absent);
+  &--unused {
+    color: var(--color-tile-unused-text);
+    background-color: var(--color-unused);
+    border-color: var(--color-unused);
   }
 }
 

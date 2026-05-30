@@ -25,22 +25,27 @@ defineProps({
 <style lang="scss" scoped>
 .toast-area {
   position: fixed;
-  top: 5rem;
   left: 50%;
+  bottom: 1.25rem;
   transform: translateX(-50%);
   z-index: 300;
+  width: max-content;
+  max-width: calc(100% - 2rem);
   pointer-events: none;
 }
 
+// slim surface banner with an accent edge, anchored bottom-center
 .toast {
   margin: 0;
-  padding: 0.75rem 1.25rem;
+  padding: 0.7rem 1.1rem;
   font-weight: 700;
-  text-align: center;
-  color: #111;
-  background-color: #fff;
-  border-radius: 0.5rem;
-  box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.4);
+  text-align: left;
+  color: var(--color-text);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-surface-border);
+  border-left: 4px solid var(--color-accent);
+  border-radius: 0.4rem;
+  box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.45);
 }
 
 .toast-enter-active {
@@ -53,7 +58,7 @@ defineProps({
 
 .toast-enter-from {
   opacity: 0;
-  transform: translateY(-0.5rem);
+  transform: translateY(0.5rem);
 }
 
 .toast-leave-to {

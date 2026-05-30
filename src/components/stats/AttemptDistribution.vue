@@ -1,22 +1,20 @@
 <script setup>
 import { computed } from "vue";
-import { MAX_GUESSES } from "@/game/constants";
 
 const props = defineProps({
   distribution: { type: Object, required: true },
+  maxGuesses: { type: Number, required: true },
   highlight: { type: Number, default: 0 },
 });
 
 const rows = computed(() =>
-  Array.from({ length: MAX_GUESSES }, (_, i) => {
-    const guessNumber = i + 1;
-    return { guessNumber, count: props.distribution[guessNumber] || 0 };
+  Array.from({ length: props.maxGuesses }, (_, i) => {
+    const attemptNumber = i + 1;
+    return { attemptNumber, count: props.distribution[attemptNumber] || 0 };
   })
 );
 
-const max = computed(() =>
-  Math.max(1, ...rows.value.map((row) => row.count))
-);
+const max = computed(() => Math.max(1, ...rows.value.map((row) => row.count)));
 
 function widthFor(count) {
   return count === 0 ? 0 : Math.max(8, (count / max.value) * 100);
@@ -27,18 +25,16 @@ function widthFor(count) {
   <div class="distribution">
     <div
       v-for="row in rows"
-      :key="row.guessNumber"
+      :key="row.attemptNumber"
       class="distribution__row"
-      :class="{ 'distribution__row--current': row.guessNumber === highlight }"
+      :class="{ 'distribution__row--current': row.attemptNumber === highlight }"
     >
-      <span class="distribution__label">{{ row.guessNumber }}</span>
+      <span class="distribution__label">{{ row.attemptNumber }}</span>
       <span class="distribution__track">
         <span
           class="distribution__bar"
           :style="{ width: `${widthFor(row.count)}%` }"
-        >
-          {{ row.count }}
-        </span>
+        >{{ row.count }}</span>
       </span>
     </div>
   </div>
@@ -77,11 +73,11 @@ function widthFor(count) {
     font-weight: 700;
     color: #fff;
     background-color: var(--color-bar);
-    border-radius: 2px;
+    border-radius: 999px;
   }
 
   &__row--current &__bar {
-    background-color: var(--color-correct);
+    background-color: var(--color-locked);
   }
 }
 </style>

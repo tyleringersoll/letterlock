@@ -1,35 +1,43 @@
 :root {
   color-scheme: dark;
 
-  --color-bg: #2c363f;
-  --color-surface: #1f272d;
-  --color-surface-border: #3a4750;
-  --color-text: #fefefe;
-  --color-text-muted: #a7adba;
-  --color-accent: #00b7ff;
-  --color-focus: #0a84ff;
+  --color-bg: #13142a;
+  --color-surface: #1d1f3d;
+  --color-surface-border: #34376a;
+  --color-board: #191b36;
+  --color-board-border: #2e3160;
+  --color-text: #f2f3fb;
+  --color-text-muted: #9aa0cf;
+  --color-accent: #7c6cf0;
+  --color-accent-soft: #00c2b2;
+  --color-focus: #8b9cff;
 
-  --color-correct: #538d4e;
-  --color-present: #b59f3b;
-  --color-absent: #3a3d42;
+  // semantic puzzle states
+  --color-locked: #6c5ce7; // exact match (violet fill)
+  --color-misplaced: #e5484d; // in the word, wrong place (red outline)
+  --color-unused: #3a3f5c; // absent (muted slate)
 
-  --color-tile-text: #fefefe;
-  --color-tile-bg: transparent;
-  --color-tile-border: #565f66;
-  --color-tile-border-filled: #878f96;
+  --color-tile-text: #f2f3fb;
+  --color-tile-bg: #191b36;
+  --color-tile-border: #34376a;
+  --color-tile-border-filled: #6b73c8;
+  --color-tile-unused-text: #c3c8e8;
 
-  --color-key-bg: #565f66;
-  --color-key-bg-hover: #646e76;
-  --color-key-text: #fefefe;
-  --color-key-absent-text: #d7dadd;
+  --color-key-text: #f2f3fb;
+  --color-key-bg: #2a2d57;
+  --color-key-bg-hover: #353a6a;
+  --color-key-border: #3a3f72;
+  --color-key-action: #4b4f86;
+  --color-key-action-hover: #5a5f9c;
+  --color-key-unused-text: #aeb4dc;
 
-  --color-bar: #565f66;
+  --color-bar: #3a3f6a;
 }
 
-// colorblind palette
+// colorblind-friendly palette: push the locked fill to orange (misplaced keeps
+// its red outline, which already reads as a distinct treatment)
 body.theme-high-contrast {
-  --color-correct: #f5793a;
-  --color-present: #85c0f9;
+  --color-locked: #e8590c;
 }
 
 *,
@@ -45,7 +53,7 @@ body {
 
 body {
   margin: 0;
-  font-family: "Roboto Condensed", system-ui, -apple-system, sans-serif;
+  font-family: "Space Grotesk", system-ui, -apple-system, sans-serif;
   font-size: 100%;
   line-height: 1.3;
   color: var(--color-text);
@@ -73,7 +81,7 @@ a {
   transition: color 0.2s ease;
 
   &:hover {
-    color: var(--color-present);
+    color: var(--color-accent-soft);
   }
 }
 

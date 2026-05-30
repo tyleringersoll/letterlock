@@ -9,7 +9,9 @@
       "Bash(echo \"=== exit: $? ===\")",
       "Bash(echo \"lint exit: $?\")",
       "Bash(echo \"lint: clean \\(exit $?\\)\")",
-      "Bash(echo \"lint clean \\(exit $?\\)\")"
+      "Bash(echo \"lint clean \\(exit $?\\)\")",
+      "Bash(node /tmp/gen-words.mjs)",
+      "Bash(echo \"exit $?\")"
     ]
   }
 }

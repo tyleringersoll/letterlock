@@ -1,31 +1,37 @@
-import { MAX_GUESSES, TileState } from "@/game/constants";
+import { TileState } from "@/game/constants";
 
-const EMOJI = Object.freeze({
-  [TileState.CORRECT]: "🟩",
-  [TileState.PRESENT]: "🟨",
-  [TileState.ABSENT]: "⬛",
-});
+export const APP_NAME = "Letterlock";
 
-export function evaluationToEmoji(evaluation) {
-  return evaluation
-    .map((state) => EMOJI[state] ?? EMOJI[TileState.ABSENT])
-    .join("");
+// add up locked / misplaced / unused across every attempt
+export function tallyStates(history) {
+  const counts = {
+    [TileState.LOCKED]: 0,
+    [TileState.MISPLACED]: 0,
+    [TileState.UNUSED]: 0,
+  };
+  for (const turn of history) {
+    for (const state of turn.evaluation) {
+      if (state in counts) counts[state] += 1;
+    }
+  }
+  return counts;
 }
 
-export function buildShareText(
-  history,
-  { won, maxGuesses = MAX_GUESSES, url, title = "Tyler's Wordle", answer } = {}
-) {
-  const score = won ? history.length : "X";
-  const lines = [`${title} ${score}/${maxGuesses}`];
+// plain text summary - no emoji grid, no puzzle number
+export function buildShareText(history, { solved, appName = APP_NAME } = {}) {
+  const attempts = history.length;
+  const noun = attempts === 1 ? "attempt" : "attempts";
+  const headline = solved
+    ? `${appName} solved in ${attempts} ${noun}.`
+    : `${appName} not solved in ${attempts} ${noun}.`;
 
-  if (answer) lines.push(`Word: ${answer.toUpperCase()}`);
-  if (url) lines.push(url);
+  const counts = tallyStates(history);
+  const summary =
+    `Locked: ${counts[TileState.LOCKED]} | ` +
+    `Misplaced: ${counts[TileState.MISPLACED]} | ` +
+    `Unused: ${counts[TileState.UNUSED]}`;
 
-  lines.push("");
-  lines.push(history.map((turn) => evaluationToEmoji(turn.evaluation)).join("\n"));
-
-  return lines.join("\n");
+  return `${headline}\n${summary}`;
 }
 
 // pop the native share sheet if we can (ios -> messages, etc), otherwise just copy.
@@ -36,8 +42,7 @@ export async function shareOrCopy(text) {
       await navigator.share({ text });
       return "shared";
     } catch (err) {
-      if (err?.name === "AbortError") return "dismissed"; // user backed out
-      // anything else - drop down to clipboard
+      if (err?.name === "AbortError") return "dismissed";
     }
   }
 

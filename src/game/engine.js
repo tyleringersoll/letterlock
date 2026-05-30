@@ -1,30 +1,31 @@
 import { TileState, TILE_RANK } from "./constants";
 
-export function evaluateGuess(guess, answer) {
-  const g = String(guess).toLowerCase();
+// two passes so dup letters don't get double-counted - grab exact matches first, then the leftovers
+export function evaluateAttempt(attempt, answer) {
+  const g = String(attempt).toLowerCase();
   const a = String(answer).toLowerCase();
 
   if (g.length !== a.length) {
     throw new Error(
-      `Guess length (${g.length}) must match answer length (${a.length}).`
+      `Attempt length (${g.length}) must match answer length (${a.length}).`
     );
   }
 
-  const result = new Array(g.length).fill(TileState.ABSENT);
+  const result = new Array(g.length).fill(TileState.UNUSED);
   const remaining = a.split("");
 
   for (let i = 0; i < g.length; i += 1) {
     if (g[i] === remaining[i]) {
-      result[i] = TileState.CORRECT;
+      result[i] = TileState.LOCKED;
       remaining[i] = null;
     }
   }
 
   for (let i = 0; i < g.length; i += 1) {
-    if (result[i] === TileState.CORRECT) continue;
+    if (result[i] === TileState.LOCKED) continue;
     const idx = remaining.indexOf(g[i]);
     if (idx !== -1) {
-      result[i] = TileState.PRESENT;
+      result[i] = TileState.MISPLACED;
       remaining[idx] = null;
     }
   }
@@ -32,18 +33,19 @@ export function evaluateGuess(guess, answer) {
   return result;
 }
 
-export function isWinningEvaluation(evaluation) {
+export function isSolved(evaluation) {
   return (
     evaluation.length > 0 &&
-    evaluation.every((state) => state === TileState.CORRECT)
+    evaluation.every((state) => state === TileState.LOCKED)
   );
 }
 
+// best-known state per letter, drives the input panel colors
 export function deriveLetterStates(history) {
   const states = {};
 
-  for (const { guess, evaluation } of history) {
-    const letters = String(guess).toLowerCase().split("");
+  for (const { attempt, evaluation } of history) {
+    const letters = String(attempt).toLowerCase().split("");
     letters.forEach((letter, index) => {
       const next = evaluation[index];
       const current = states[letter];

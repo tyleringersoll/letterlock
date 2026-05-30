@@ -1,6 +1,6 @@
 function detectBackend() {
   try {
-    const probe = "__wordle_probe__";
+    const probe = "__letterlock_probe__";
     window.localStorage.setItem(probe, probe);
     window.localStorage.removeItem(probe);
     return window.localStorage;

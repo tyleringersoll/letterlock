@@ -1,43 +1,42 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
-import { buildShareText, evaluationToEmoji, shareOrCopy } from "./share";
+import { buildShareText, tallyStates, shareOrCopy } from "./share";
 import { TileState } from "@/game/constants";
 
-const { CORRECT, PRESENT, ABSENT } = TileState;
+const { LOCKED, MISPLACED, UNUSED } = TileState;
 
-describe("evaluationToEmoji", () => {
-  it("maps each tile state to its emoji", () => {
-    expect(evaluationToEmoji([CORRECT, PRESENT, ABSENT])).toBe("🟩🟨⬛");
+const history = [
+  {
+    attempt: "rocket",
+    evaluation: [UNUSED, MISPLACED, UNUSED, UNUSED, MISPLACED, LOCKED],
+  },
+  {
+    attempt: "planet",
+    evaluation: [LOCKED, LOCKED, LOCKED, LOCKED, LOCKED, LOCKED],
+  },
+];
+
+describe("tallyStates", () => {
+  it("counts each state across every attempt", () => {
+    expect(tallyStates(history)).toEqual({
+      [LOCKED]: 7,
+      [MISPLACED]: 2,
+      [UNUSED]: 3,
+    });
   });
 });
 
 describe("buildShareText", () => {
-  const history = [
-    { guess: "alert", evaluation: [PRESENT, ABSENT, PRESENT, PRESENT, ABSENT] },
-    { guess: "crane", evaluation: [CORRECT, CORRECT, CORRECT, CORRECT, CORRECT] },
-  ];
-
-  it("renders score, optional answer, url, and the emoji grid", () => {
-    const text = buildShareText(history, {
-      won: true,
-      maxGuesses: 6,
-      url: "https://example.com",
-      answer: "crane",
-    });
+  it("is a plain text summary, not an emoji grid", () => {
+    const text = buildShareText(history, { solved: true });
     expect(text).toBe(
-      [
-        "Tyler's Wordle 2/6",
-        "Word: CRANE",
-        "https://example.com",
-        "",
-        "🟨⬛🟨🟨⬛",
-        "🟩🟩🟩🟩🟩",
-      ].join("\n")
+      "Letterlock solved in 2 attempts.\nLocked: 7 | Misplaced: 2 | Unused: 3"
     );
+    expect(text).not.toMatch(/🟩|🟨|⬛|🟦/);
   });
 
-  it("uses X for the score on a loss", () => {
-    const text = buildShareText(history, { won: false });
-    expect(text.startsWith("Tyler's Wordle X/6")).toBe(true);
+  it("reads differently when not solved", () => {
+    const text = buildShareText(history, { solved: false });
+    expect(text.startsWith("Letterlock not solved in 2 attempts.")).toBe(true);
   });
 });
 

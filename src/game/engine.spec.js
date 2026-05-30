@@ -1,111 +1,114 @@
 import { describe, it, expect } from "vitest";
-import {
-  evaluateGuess,
-  isWinningEvaluation,
-  deriveLetterStates,
-} from "./engine";
+import { evaluateAttempt, isSolved, deriveLetterStates } from "./engine";
 import { TileState } from "./constants";
 
-const { CORRECT, PRESENT, ABSENT } = TileState;
+const { LOCKED, MISPLACED, UNUSED } = TileState;
 
-describe("evaluateGuess", () => {
-  it("marks an exact match as all correct", () => {
-    expect(evaluateGuess("crane", "crane")).toEqual([
-      CORRECT,
-      CORRECT,
-      CORRECT,
-      CORRECT,
-      CORRECT,
+describe("evaluateAttempt", () => {
+  it("marks an exact match as all locked", () => {
+    expect(evaluateAttempt("crane", "crane")).toEqual([
+      LOCKED,
+      LOCKED,
+      LOCKED,
+      LOCKED,
+      LOCKED,
     ]);
   });
 
-  it("marks letters that are absent", () => {
-    expect(evaluateGuess("fghij", "crane")).toEqual([
-      ABSENT,
-      ABSENT,
-      ABSENT,
-      ABSENT,
-      ABSENT,
+  it("marks letters that are unused", () => {
+    expect(evaluateAttempt("fghij", "crane")).toEqual([
+      UNUSED,
+      UNUSED,
+      UNUSED,
+      UNUSED,
+      UNUSED,
     ]);
   });
 
-  it("marks a present-but-misplaced letter", () => {
-    expect(evaluateGuess("alert", "crane")).toEqual([
-      PRESENT,
-      ABSENT,
-      PRESENT,
-      PRESENT,
-      ABSENT,
+  it("marks a misplaced letter", () => {
+    expect(evaluateAttempt("alert", "crane")).toEqual([
+      MISPLACED,
+      UNUSED,
+      MISPLACED,
+      MISPLACED,
+      UNUSED,
     ]);
   });
 
-  it("does not over-credit duplicate letters in the guess", () => {
-    expect(evaluateGuess("eerie", "crane")).toEqual([
-      ABSENT,
-      ABSENT,
-      PRESENT,
-      ABSENT,
-      CORRECT,
+  it("does not over-credit duplicate letters in the attempt", () => {
+    expect(evaluateAttempt("eerie", "crane")).toEqual([
+      UNUSED,
+      UNUSED,
+      MISPLACED,
+      UNUSED,
+      LOCKED,
     ]);
   });
 
   it("caps misplaced duplicates at the answer's letter count", () => {
-    expect(evaluateGuess("otter", "rebut")).toEqual([
-      ABSENT,
-      PRESENT,
-      ABSENT,
-      PRESENT,
-      PRESENT,
+    expect(evaluateAttempt("otter", "rebut")).toEqual([
+      UNUSED,
+      MISPLACED,
+      UNUSED,
+      MISPLACED,
+      MISPLACED,
     ]);
   });
 
-  it("handles the classic 'one letter, two slots' case", () => {
-    expect(evaluateGuess("babes", "abbey")).toEqual([
-      PRESENT,
-      PRESENT,
-      CORRECT,
-      CORRECT,
-      ABSENT,
+  it("works at a different word length", () => {
+    expect(evaluateAttempt("planet", "planet")).toEqual([
+      LOCKED,
+      LOCKED,
+      LOCKED,
+      LOCKED,
+      LOCKED,
+      LOCKED,
     ]);
   });
 
   it("is case-insensitive", () => {
-    expect(evaluateGuess("CRANE", "crane")).toEqual(
-      evaluateGuess("crane", "crane")
+    expect(evaluateAttempt("CRANE", "crane")).toEqual(
+      evaluateAttempt("crane", "crane")
     );
   });
 
   it("throws when lengths differ", () => {
-    expect(() => evaluateGuess("toolong", "crane")).toThrow();
+    expect(() => evaluateAttempt("toolong", "crane")).toThrow();
   });
 });
 
-describe("isWinningEvaluation", () => {
-  it("is true only when every tile is correct", () => {
-    expect(isWinningEvaluation([CORRECT, CORRECT, CORRECT])).toBe(true);
-    expect(isWinningEvaluation([CORRECT, PRESENT, CORRECT])).toBe(false);
-    expect(isWinningEvaluation([])).toBe(false);
+describe("isSolved", () => {
+  it("is true only when every tile is locked", () => {
+    expect(isSolved([LOCKED, LOCKED, LOCKED])).toBe(true);
+    expect(isSolved([LOCKED, MISPLACED, LOCKED])).toBe(false);
+    expect(isSolved([])).toBe(false);
   });
 });
 
 describe("deriveLetterStates", () => {
   it("aggregates the best state seen for each letter", () => {
     const history = [
-      { guess: "alert", evaluation: [PRESENT, ABSENT, PRESENT, PRESENT, ABSENT] },
-      { guess: "crane", evaluation: [CORRECT, CORRECT, CORRECT, CORRECT, CORRECT] },
+      {
+        attempt: "alert",
+        evaluation: [MISPLACED, UNUSED, MISPLACED, MISPLACED, UNUSED],
+      },
+      {
+        attempt: "crane",
+        evaluation: [LOCKED, LOCKED, LOCKED, LOCKED, LOCKED],
+      },
     ];
     const states = deriveLetterStates(history);
-    expect(states.a).toBe(CORRECT);
-    expect(states.r).toBe(CORRECT);
-    expect(states.e).toBe(CORRECT);
-    expect(states.l).toBe(ABSENT);
-    expect(states.t).toBe(ABSENT);
+    expect(states.a).toBe(LOCKED);
+    expect(states.r).toBe(LOCKED);
+    expect(states.e).toBe(LOCKED);
+    expect(states.l).toBe(UNUSED);
+    expect(states.t).toBe(UNUSED);
   });
 
   it("never downgrades a letter", () => {
     const history = [
-      { guess: "aaaaa", evaluation: [CORRECT, ABSENT, ABSENT, ABSENT, ABSENT] },
+      { attempt: "aaaaa", evaluation: [LOCKED, UNUSED, UNUSED, UNUSED, UNUSED] },
     ];
-    expect(deriveLetterStates(history).a).toBe(CORRECT);
+    expect(deriveLetterStates(history).a).toBe(LOCKED);
   });
 });

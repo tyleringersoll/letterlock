@@ -12,24 +12,25 @@ describe("GameView (integration)", () => {
     document.body.className = "";
   });
 
-  it("renders a 6x5 board and a full keyboard", () => {
+  it("renders a 7x6 board and the input panel", () => {
     wrapper = mount(GameView, { attachTo: document.body });
-    expect(wrapper.findAll(".board-row")).toHaveLength(6);
-    expect(wrapper.findAll(".board-row")[0].findAll(".tile")).toHaveLength(5);
-    expect(wrapper.find('[aria-label="Submit guess"]').exists()).toBe(true);
+    const rows = wrapper.findAll(".attempt-row");
+    expect(rows).toHaveLength(7);
+    expect(rows[0].findAll(".tile")).toHaveLength(6);
+    expect(wrapper.find('[aria-label="Submit attempt"]').exists()).toBe(true);
     expect(wrapper.find('[aria-label="Delete letter"]').exists()).toBe(true);
   });
 
-  it("types letters from the on-screen keyboard into the active row", async () => {
+  it("types letters from the input panel into the active row", async () => {
     wrapper = mount(GameView, { attachTo: document.body });
 
-    for (const letter of ["q", "w", "e", "r", "t"]) {
-      await wrapper.find(`.keyboard [aria-label="${letter}"]`).trigger("click");
+    for (const letter of ["p", "l", "a", "n", "e", "t"]) {
+      await wrapper.find(`.input-panel [aria-label="${letter}"]`).trigger("click");
     }
 
-    const firstRow = wrapper.findAll(".board-row")[0];
+    const firstRow = wrapper.findAll(".attempt-row")[0];
     const text = firstRow.findAll(".tile").map((t) => t.text()).join("");
-    expect(text).toBe("qwert");
+    expect(text).toBe("planet");
   });
 
   it("toggles high-contrast mode from the How-to-play dialog", async () => {

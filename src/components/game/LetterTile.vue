@@ -15,14 +15,17 @@ const ariaLabel = computed(() => {
 });
 
 const isEvaluated = computed(() =>
-  [TileState.CORRECT, TileState.PRESENT, TileState.ABSENT].includes(props.state)
+  [TileState.LOCKED, TileState.MISPLACED, TileState.UNUSED].includes(props.state)
 );
 </script>
 
 <template>
   <div
     class="tile"
-    :class="[`tile--${state}`, { 'tile--filled': !!letter, 'tile--flip': isEvaluated }]"
+    :class="[
+      `tile--${state}`,
+      { 'tile--filled': !!letter, 'tile--reveal': isEvaluated },
+    ]"
     role="gridcell"
     :aria-label="ariaLabel"
     :style="{ '--tile-index': position }"
@@ -40,77 +43,83 @@ const isEvaluated = computed(() =>
   align-items: center;
   justify-content: center;
   width: 100%;
-  max-width: 4rem;
   aspect-ratio: 1 / 1;
-  // scales with the board width (set as a container query container)
-  font-size: clamp(0.85rem, 9.5cqw, 2rem);
-  font-weight: 700;
+  // font scales with tile width (board width / column count)
+  font-size: clamp(0.8rem, calc(57cqw / var(--cols, 6)), 2rem);
+  font-weight: 800;
   line-height: 1;
   text-transform: uppercase;
   color: var(--color-tile-text);
   background-color: var(--color-tile-bg);
   border: 2px solid var(--color-tile-border);
-  border-radius: 4px;
+  // rounded, not square
+  border-radius: 28%;
   user-select: none;
-  transition: border-color 0.1s ease, transform 0.1s ease;
+  transition: border-color 0.12s ease, transform 0.12s ease;
 
   &--filled {
     border-color: var(--color-tile-border-filled);
-    animation: tile-pop 0.1s ease;
+    animation: tile-press 0.12s ease;
   }
 
-  &--correct {
+  &--locked {
     color: #fff;
-    background-color: var(--color-correct);
-    border-color: var(--color-correct);
+    background-color: var(--color-locked);
+    border-color: var(--color-locked);
   }
 
-  &--present {
-    color: #fff;
-    background-color: var(--color-present);
-    border-color: var(--color-present);
+  // red outline, no fill
+  &--misplaced {
+    color: var(--color-tile-text);
+    background-color: transparent;
+    border-color: var(--color-misplaced);
+    box-shadow: inset 0 0 0 2px var(--color-misplaced);
   }
 
-  &--absent {
-    color: #fff;
-    background-color: var(--color-absent);
-    border-color: var(--color-absent);
+  &--unused {
+    color: var(--color-tile-unused-text);
+    background-color: var(--color-unused);
+    border-color: var(--color-unused);
   }
 
-  &--flip {
-    animation: tile-flip 0.5s ease forwards;
-    animation-delay: calc(var(--tile-index) * 0.18s);
+  // reveal: settle in with a small spin + scale (not a flip)
+  &--reveal {
+    animation: tile-reveal 0.42s ease both;
+    animation-delay: calc(var(--tile-index) * 0.16s);
   }
 }
 
-@keyframes tile-pop {
+@keyframes tile-press {
   0% {
-    transform: scale(0.9);
+    transform: scale(0.92);
   }
   60% {
-    transform: scale(1.08);
+    transform: scale(1.06);
   }
   100% {
     transform: scale(1);
   }
 }
 
-@keyframes tile-flip {
+@keyframes tile-reveal {
   0% {
-    transform: rotateX(0);
+    transform: scale(0.5) rotate(-8deg);
+    opacity: 0;
   }
-  50% {
-    transform: rotateX(-90deg);
+  60% {
+    transform: scale(1.12) rotate(3deg);
+    opacity: 1;
   }
   100% {
-    transform: rotateX(0);
+    transform: scale(1) rotate(0);
+    opacity: 1;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .tile,
   .tile--filled,
-  .tile--flip {
+  .tile--reveal {
     animation: none;
     transition: none;
   }
